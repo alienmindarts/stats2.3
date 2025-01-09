@@ -356,123 +356,45 @@ function updateChart() {
 
   const plotlyData = selectedArtists.map((artist, index) => {
     const artistTracks = groupedTracks[artist];
-    
-    const baseConfig = {
+
+    return {
       x: artistTracks.map(item => getPlays(item.track)),
       y: artistTracks.map(item => getRatioData(item.track)),
       name: artist,
+      type: 'scatter',
+      mode: 'markers',
       marker: {
+        size: artistTracks.map(item => Math.log(getPlays(item.track)) * 3),
+        line: {
+          width: 1,
+          color: 'var(--surface)'
+        },
         color: getArtistColor(index),
         opacity: 0.8
+      },
+      customdata: artistTracks.map(item => ({
+        title: item.track.Title,
+        plays: getPlays(item.track),
+        likes: item.track.Like,
+        ratio: getRatioData(item.track)
+      })),
+    hovertemplate: `
+      <b>${artist}</b><br>
+      <b>%{customdata.title}</b><br>
+      Plays: %{x:,.0f}<br>
+      Likes: %{customdata.likes:,.0f}<br>
+      Ratio: %{y:.2f}%<br>
+      <extra></extra>
+    `,
+    hoverlabel: {
+      bgcolor: 'var(--surface)',
+      bordercolor: 'var(--background)',
+      font: {
+        size: 12,
+        color: 'var(--text)'
       }
-    };
-
-    if (chartType === 'bar') {
-      return {
-        ...baseConfig,
-        type: 'bar',
-        marker: {
-          ...baseConfig.marker,
-          line: {
-            width: 1,
-            color: 'var(--surface)'
-          }
-        },
-        customdata: artistTracks.map(item => ({
-          title: item.track.Title,
-          plays: getPlays(item.track),
-          likes: item.track.Like,
-          ratio: getRatioData(item.track)
-        })),
-        hovertemplate: `
-          <b>${artist}</b><br>
-          <b>%{customdata.title}</b><br>
-          Plays: %{x:,.0f}<br>
-          Likes: %{customdata.likes:,.0f}<br>
-          Ratio: %{y:.2f}%<br>
-          <extra></extra>
-        `,
-        hoverlabel: {
-          bgcolor: 'var(--surface)',
-          bordercolor: 'var(--background)',
-          font: {
-            size: 12,
-            color: 'var(--text)'
-          }
-        }
-      };
-    } else if (chartType === 'line') {
-      return {
-        ...baseConfig,
-        type: 'scatter',
-        mode: 'lines+markers',
-        line: {
-          width: 2
-        },
-        marker: {
-          ...baseConfig.marker,
-          size: 8
-        },
-        customdata: artistTracks.map(item => ({
-          title: item.track.Title,
-          plays: getPlays(item.track),
-          likes: item.track.Like,
-          ratio: getRatioData(item.track)
-        })),
-        hovertemplate: `
-          <b>${artist}</b><br>
-          <b>%{customdata.title}</b><br>
-          Plays: %{x:,.0f}<br>
-          Likes: %{customdata.likes:,.0f}<br>
-          Ratio: %{y:.2f}%<br>
-          <extra></extra>
-        `,
-        hoverlabel: {
-          bgcolor: 'var(--surface)',
-          bordercolor: 'var(--background)',
-          font: {
-            size: 12,
-            color: 'var(--text)'
-          }
-        }
-      };
-    } else {
-      return {
-        ...baseConfig,
-        type: 'scatter',
-        mode: 'markers',
-        marker: {
-          ...baseConfig.marker,
-          size: artistTracks.map(item => Math.log(getPlays(item.track)) * 3),
-          line: {
-            width: 1,
-            color: 'var(--surface)'
-          }
-        },
-        customdata: artistTracks.map(item => ({
-          title: item.track.Title,
-          plays: getPlays(item.track),
-          likes: item.track.Like,
-          ratio: getRatioData(item.track)
-        })),
-        hovertemplate: `
-          <b>${artist}</b><br>
-          <b>%{customdata.title}</b><br>
-          Plays: %{x:,.0f}<br>
-          Likes: %{customdata.likes:,.0f}<br>
-          Ratio: %{y:.2f}%<br>
-          <extra></extra>
-        `,
-        hoverlabel: {
-          bgcolor: 'var(--surface)',
-          bordercolor: 'var(--background)',
-          font: {
-            size: 12,
-            color: 'var(--text)'
-          }
-        }
-      };
     }
+  };
   });
 
   // Update layout based on current view
