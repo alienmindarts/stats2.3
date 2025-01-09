@@ -1,0 +1,493 @@
+:root {
+  --primary: #6366f1; /* Indigo */
+  --primary-hover: #4f46e5;
+  --secondary: #10b981; /* Emerald */
+  --secondary-hover: #059669;
+  --tertiary: #ef4444; /* Red */
+  --tertiary-hover: #dc2626;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  
+  /* Chart colors */
+  --bar-chart-plays: #6366f1;
+  --bar-chart-likes: #10b981;
+  --line-chart-plays: #818cf8;
+  --line-chart-likes: #34d399;
+  --chart-ratio: #ef4444;
+
+  /* Artist-specific colors */
+  --chart-okta: #6366f1; /* Indigo */
+  --chart-rafyx: #10b981; /* Emerald */
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 2rem;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+.chart-type-controls {
+  width: 90%;
+  max-width: 1200px;
+  margin: 1rem auto 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-type-controls h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.chart-type-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chart-type-buttons button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chart-type-buttons button:hover {
+  background: #e8e8e8;
+  border-color: #ccc;
+}
+
+.chart-type-buttons button:active {
+  background: #ddd;
+}
+
+.chart-type-buttons button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.view-controls {
+  width: 90%;
+  max-width: 1200px;
+  margin: 1rem auto 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.view-controls h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.view-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-buttons button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-buttons button:hover {
+  background: #e8e8e8;
+  border-color: #ccc;
+}
+
+.view-buttons button:active {
+  background: #ddd;
+}
+
+.view-buttons button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.sort-controls {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0.5rem auto 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-controls {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0.5rem auto 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-controls h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.comparison-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.comparison-buttons button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.comparison-buttons button:hover {
+  background: #e8e8e8;
+  border-color: #ccc;
+}
+
+.comparison-buttons button:active {
+  background: #ddd;
+}
+
+.comparison-buttons button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.sort-controls h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sort-buttons button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-buttons button:hover {
+  background: #e8e8e8;
+  border-color: #ccc;
+}
+
+.sort-buttons button:active {
+  background: #ddd;
+}
+
+.chart-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 2rem;
+  font-weight: 600;
+  font-size: 1.75rem;
+}
+
+#trackChart {
+  width: 100% !important;
+  height: 600px !important;
+  transition: opacity 0.2s ease;
+}
+
+/* Improved x-axis styling */
+.plotly .xaxis .tick text {
+  font-size: 12px;
+  font-weight: 500;
+  fill: var(--text-light);
+  transform: rotate(-45deg);
+  text-anchor: end;
+  white-space: nowrap;
+  max-width: 120px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.plotly .xaxis .tick:hover text {
+  fill: var(--text);
+  font-weight: 600;
+}
+
+/* Better spacing for x-axis labels */
+.plotly .xaxislayer-above {
+  padding-top: 20px;
+}
+
+/* Improved hover effects */
+.plotly .hovertext {
+  background: var(--surface) !important;
+  border: 1px solid var(--background) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  color: var(--text) !important;
+  font-family: inherit !important;
+  padding: 8px 12px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .plotly .xaxis .tick text {
+    font-size: 10px;
+    max-width: 80px;
+  }
+}
+
+#detailsPanel {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  max-width: 400px;
+  display: none;
+  animation: slideUp 0.3s ease;
+}
+
+#detailsPanel h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text);
+  font-size: 1.25rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.stats-grid div {
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.play-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.play-button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.play-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+}
+
+/* New styles for enhanced track details */
+.track-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.track-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.stats-section {
+  margin-bottom: 1.5rem;
+}
+
+.stats-section h4 {
+  margin: 0 0 1rem;
+  color: var(--text-light);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.comparison-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--background);
+}
+
+.comparison-section h3 {
+  margin: 0 0 1rem;
+  color: var(--text-light);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.comparison-item {
+  margin-bottom: 1rem;
+}
+
+.comparison-item h4 {
+  margin: 0 0 0.5rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.comparison-grid div {
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.25rem;
+}
+
+.comparison-grid div[data-trend="up"] {
+  color: #10b981;
+}
+
+.comparison-grid div[data-trend="down"] {
+  color: #ef4444;
+}
+
+/* Highlights section */
+.highlights-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.highlight-card {
+  padding: 1.5rem;
+  background: var(--background);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.highlight-card h3 {
+  margin: 0 0 0.5rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.highlight-card .value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.highlight-card .subtext {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* Chart element highlighting */
+.chart-highlight {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
+  border-radius: 4px;
+  transition: box-shadow 0.2s ease;
+}
+
+.bar-highlight {
+  background-color: rgba(99, 102, 241, 0.2) !important;
+  border-color: rgba(99, 102, 241, 0.8) !important;
+}
+
+.line-highlight {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  border-color: rgba(99, 102, 241, 0.8) !important;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .chart-container {
+    padding: 1rem;
+  }
+  
+  #trackChart {
+    height: 400px !important;
+  }
+  
+  #detailsPanel {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

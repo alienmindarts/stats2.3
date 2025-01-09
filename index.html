@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OKTA Track Stats</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+</head>
+<body>
+  <div class="chart-type-controls">
+    <h2>Chart Type:</h2>
+    <div class="chart-type-buttons">
+      <button class="chart-type-button active" data-type="bar">Bar</button>
+      <button class="chart-type-button" data-type="line">Line</button>
+    </div>
+  </div>
+  <div class="view-controls">
+    <h2>View:</h2>
+    <div class="view-buttons">
+      <button class="view-button active" data-view="ratio" title="Display Plays/Likes Ratio">Ratio</button>
+      <button class="view-button" data-view="plays" title="Display Total Plays">Plays</button>
+      <button class="view-button" data-view="likes" title="Display Total Likes">Likes</button>
+    </div>
+  </div>
+  <div class="sort-controls">
+    <h2>Sort By:</h2>
+    <div class="sort-buttons">
+      <button id="sort-asc" title="Sort in Ascending Order">Ascending</button>
+      <button id="sort-desc" title="Sort in Descending Order">Descending</button>
+    </div>
+  </div>
+  <div class="comparison-controls">
+    <h2>Comparison Mode:</h2>
+    <div class="comparison-buttons">
+      <button class="comparison-button active" data-mode="overlay" title="Overlay datasets">Overlay</button>
+      <button class="comparison-button" data-mode="side-by-side" title="Display datasets side by side">Side-by-Side</button>
+    </div>
+  </div>
+  <div class="chart-container">
+    <h1>OKTA Track Plays vs Likes</h1>
+    <div id="trackChart"></div>
+    <div id="loadingIndicator" style="display: none;">Loading...</div>
+  </div>
+  <div class="highlights-section">
+    <h2>Key Highlights</h2>
+    <div class="highlights-grid">
+      <div class="highlight-card">
+        <h3>Total Plays</h3>
+        <div class="value" id="total-plays">0</div>
+        <div class="subtext">All Time</div>
+      </div>
+      <div class="highlight-card">
+        <h3>Most Popular</h3>
+        <div class="value" id="popular-track">-</div>
+        <div class="subtext">By Total Plays</div>
+      </div>
+      <div class="highlight-card">
+        <h3>Average Likes</h3>
+        <div class="value" id="avg-likes">0</div>
+        <div class="subtext">Per Track</div>
+      </div>
+      <div class="highlight-card">
+        <h3>Recent Activity</h3>
+        <div class="value" id="recent-activity">0</div>
+        <div class="subtext">Last 7 Days</div>
+      </div>
+    </div>
+  </div>
+  <div id="average-container"></div>
+  <div id="detailsPanel" style="display: none;">
+    <div class="track-header">
+      <h3>Track Details</h3>
+    </div>
+    <div class="stats-section">
+      <h4>Current Stats</h4>
+      <div class="stats-grid">
+        <div>Plays: <span id="plays"></span></div>
+        <div>Likes: <span id="likes"></span></div>
+        <div>Ratio: <span id="ratio"></span></div>
+      </div>
+    </div>
+    <div class="comparison-section">
+      <h3>Comparison</h3>
+      <!-- Comparison items will be dynamically inserted here -->
+    </div>
+    <a href="#" class="play-button" target="_blank">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      Open in SoundCloud
+    </a>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

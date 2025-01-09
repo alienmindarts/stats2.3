@@ -1,0 +1,102 @@
+Project: SoundCloud Artist Statistics Visualization
+
+This is a comprehensive web application for analyzing and visualizing SoundCloud artist statistics. The project provides interactive visualizations of track performance metrics including plays, likes, and plays-to-likes ratio.
+
+Project Structure:
+1. Core Files:
+   - index.html: Main application interface with interactive controls
+   - styles.css: Styling for the visualization interface
+   - script.js: Main application logic and data processing
+
+2. Data Files:
+   - artists/ (directory containing JSON data files):
+     * okta stats.json
+     * rafyx stats.json
+     * artist3 stats.json
+     * artist4 stats.json
+     * artist5 stats.json
+     * artist6 stats.json
+
+3. Configuration:
+   - package.json: Project dependencies and configuration
+   - package-lock.json: Locked dependency versions
+
+Key Features:
+- Interactive Visualization:
+  * Multiple chart types (bar, line)
+  * Different data views (ratio, plays, likes)
+  * Sorting options (ascending, descending)
+  * Comparison modes (overlay, side-by-side)
+  * Track details panel with performance metrics
+
+- Data Processing:
+  * Automatic data loading from JSON files
+  * Data validation and filtering
+  * Plays-to-likes ratio calculation
+  * Data normalization and scaling
+  * Track comparison functionality
+
+- Visualization Features:
+  * Plotly.js-based interactive charts
+  * Logarithmic scaling for better data representation
+  * Customizable chart styles and layouts
+  * Hover tooltips with detailed track information
+  * Responsive design for different screen sizes
+
+- Analytics Features:
+  * Key highlights section showing:
+    - Total plays across all tracks
+    - Most popular track by plays
+    - Average likes per track
+    - Recent activity metrics
+  * Track comparison functionality showing:
+    - Plays, likes, and ratio differences
+    - Percentage changes between tracks
+    - Trend indicators (▲/▼)
+
+Technical Details:
+- Built using modern web technologies:
+  * HTML5, CSS3, JavaScript (ES6+)
+  * Plotly.js for data visualization
+  * Fetch API for data loading
+- Data Processing:
+  * Automatic conversion of play counts (handling 'K' notation)
+  * Data validation and error handling
+  * Caching of sorted data for better performance
+- Interactive Controls:
+  * View selection (ratio, plays, likes)
+  * Sort order (ascending, descending)
+  * Chart type (bar, line)
+  * Comparison mode (overlay, side-by-side)
+
+Information Flow:
+1. Data Loading:
+   - User selects artist from interface
+   - Application fetches corresponding JSON file from artists/ directory
+   - Data is parsed and validated
+   - Track statistics are extracted and normalized
+
+2. Data Processing:
+   - Play counts are converted from string format (e.g., "1.2K") to numeric values
+   - Plays-to-likes ratio is calculated for each track
+   - Data is sorted based on selected criteria (plays, likes, ratio)
+   - Data is cached for quick access during user interactions
+
+3. Visualization Pipeline:
+   - Processed data is passed to Plotly.js
+   - Charts are generated based on selected view type
+   - Logarithmic scaling is applied for better data representation
+   - Interactive elements (tooltips, hover effects) are added
+
+4. User Interaction:
+   - User selections (sort order, view type) trigger data re-processing
+   - Updated data is passed to visualization pipeline
+   - Charts are dynamically updated without full page reload
+   - Track comparison mode merges data from multiple artists
+   - Detailed track information is displayed in side panel
+
+5. Analytics Display:
+   - Key metrics are calculated from processed data
+   - Highlights section is updated with current statistics
+   - Comparison metrics are calculated when comparing tracks
+   - Trend indicators are updated based on data changes
