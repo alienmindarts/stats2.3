@@ -68,9 +68,10 @@ async function initializeApp() {
   }
 
   // Create artist selection controls
-  const artistControls = document.createElement('div');
-  artistControls.id = 'artistControls';
-  document.body.insertBefore(artistControls, document.getElementById('chartContainer'));
+const artistControls = document.createElement('div');
+artistControls.id = 'artistControls';
+artistControls.className = 'artist-controls';
+document.querySelector('.chart-container').insertAdjacentElement('beforebegin', artistControls);
 
   Object.keys(artistData).forEach(artist => {
     const checkbox = document.createElement('input');

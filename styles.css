@@ -30,6 +30,36 @@ body {
   color: var(--text);
 }
 
+.artist-controls {
+  width: 90%;
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.artist-controls h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.artist-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.artist-controls input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
 .chart-type-controls {
   width: 90%;
   max-width: 1200px;
