@@ -71,7 +71,7 @@ async function initializeApp() {
 const artistControls = document.createElement('div');
 artistControls.id = 'artistControls';
 artistControls.className = 'artist-controls';
-document.querySelector('.chart-container').insertAdjacentElement('beforebegin', artistControls);
+document.querySelector('.chart-container').insertAdjacentElement('afterend', artistControls);
 
   Object.keys(artistData).forEach(artist => {
     const checkbox = document.createElement('input');
@@ -164,6 +164,32 @@ let chart;
 const chartDiv = document.getElementById('trackChart');
 if (!chartDiv) {
   console.error('Chart div not found');
+}
+
+// Track search functionality
+const searchInput = document.getElementById('trackSearch');
+const clearSearchButton = document.getElementById('clearSearch');
+
+let currentSearchTerm = '';
+
+// Setup search event listeners
+if (searchInput && clearSearchButton) {
+  searchInput.addEventListener('input', (e) => {
+    currentSearchTerm = e.target.value.toLowerCase();
+    updateChart();
+  });
+
+  clearSearchButton.addEventListener('click', () => {
+    searchInput.value = '';
+    currentSearchTerm = '';
+    updateChart();
+  });
+}
+
+// Helper function to check if track matches search
+function trackMatchesSearch(track) {
+  if (!currentSearchTerm) return true;
+  return track.Title.toLowerCase().includes(currentSearchTerm);
 }
 
 // Plotly chart layout
@@ -401,8 +427,18 @@ function updateChart() {
 
   const plotlyData = selectedArtists.map((artist, index) => {
     const artistTracks = groupedTracks[artist];
+    
+    // Apply search filtering and set marker styles
+    const filteredTracks = artistTracks.filter(item => 
+      trackMatchesSearch(item.track)
+    );
+    
+    const nonMatchingTracks = artistTracks.filter(item =>
+      !trackMatchesSearch(item.track)
+    );
 
-    return {
+    // Create single trace with conditional styling
+    const trace = {
       x: artistTracks.map(item => getPlays(item.track)),
       y: artistTracks.map(item => getRatioData(item.track)),
       name: artist,
@@ -411,11 +447,13 @@ function updateChart() {
       marker: {
         size: artistTracks.map(item => Math.log(getPlays(item.track)) * 3),
         line: {
-          width: 1,
+          width: 2,
           color: 'var(--surface)'
         },
         color: getArtistColor(index),
-        opacity: 0.8
+        opacity: artistTracks.map(item => 
+          trackMatchesSearch(item.track) ? 1 : 0.2
+        )
       },
       customdata: artistTracks.map(item => ({
         track: item.track,
@@ -424,24 +462,26 @@ function updateChart() {
         likes: item.track.Like,
         ratio: getRatioData(item.track)
       })),
-    hovertemplate: `
-      <b>${artist}</b><br>
-      <b>%{customdata.title}</b><br>
-      Plays: %{x:,.0f}<br>
-      Likes: %{customdata.likes:,.0f}<br>
-      Ratio: %{y:.2f}%<br>
-      <extra></extra>
-    `,
-    hoverlabel: {
-      bgcolor: 'var(--surface)',
-      bordercolor: 'var(--background)',
-      font: {
-        size: 12,
-        color: 'var(--text)'
+      hovertemplate: `
+        <b>${artist}</b><br>
+        <b>%{customdata.title}</b><br>
+        Plays: %{x:,.0f}<br>
+        Likes: %{customdata.likes:,.0f}<br>
+        Ratio: %{y:.2f}%<br>
+        <extra></extra>
+      `,
+      hoverlabel: {
+        bgcolor: 'var(--surface)',
+        bordercolor: 'var(--background)',
+        font: {
+          size: 12,
+          color: 'var(--text)'
+        }
       }
-    }
-  };
-  });
+    };
+
+    return trace;
+  }).flat();
 
   // Update layout based on current view
   layout.yaxis.title = currentView === 'ratio' ? 'Plays/Likes Ratio (%)' :
@@ -473,10 +513,9 @@ function calculatePlayLikeRatio(track) {
   return plays > 0 ? (track.Like / plays) : 0;
 }
 
-// Get top 10 songs from selected artists
-function getTopSongs(selectedArtists) {
-  // Get all tracks from selected artists
-  const allTracks = selectedArtists.flatMap(artist => 
+// Get top 100 songs from selected artists
+function getTopSongs(selectedArtists, page = 1, pageSize = 100) {
+  const allTracks = selectedArtists.flatMap(artist =>
     artistData[artist].map(track => ({
       ...track,
       artist,
@@ -484,15 +523,14 @@ function getTopSongs(selectedArtists) {
     }))
   );
 
-  // Sort by ratio descending
   const sortedTracks = allTracks.sort((a, b) => b.ratio - a.ratio);
-
-  // Return top 10
-  return sortedTracks.slice(0, 10);
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  return sortedTracks.slice(startIndex, endIndex);
 }
 
 // Update top songs table
-function updateTopSongsTable(selectedArtists) {
+function updateTopSongsTable(selectedArtists, currentPage = 1, pageSize = 100) {
   const table = document.getElementById('topSongsTable');
   if (!table) return;
 
@@ -501,44 +539,110 @@ function updateTopSongsTable(selectedArtists) {
     table.deleteRow(1);
   }
 
-  // Get top songs
-  const topSongs = getTopSongs(selectedArtists);
+  // Get top songs for the current page
+  const topSongs = getTopSongs(selectedArtists, currentPage, pageSize);
 
   // Add rows for top songs
   topSongs.forEach((track, index) => {
     const row = table.insertRow();
     row.dataset.track = JSON.stringify(track);
-    
+
     // Rank
     const rankCell = row.insertCell();
-    rankCell.textContent = index + 1;
-    
+    rankCell.textContent = (currentPage - 1) * pageSize + index + 1;
+
     // Track name
     const nameCell = row.insertCell();
     nameCell.textContent = track.Title;
-    
+
     // Artist
     const artistCell = row.insertCell();
     artistCell.textContent = track.artist;
-    
+
     // Plays
     const playsCell = row.insertCell();
     playsCell.textContent = getPlays(track).toLocaleString();
-    
+
     // Likes
     const likesCell = row.insertCell();
     likesCell.textContent = track.Like.toLocaleString();
-    
+
     // Ratio
     const ratioCell = row.insertCell();
     ratioCell.textContent = `${(track.ratio * 100).toFixed(2)}%`;
-    
+
     // Add click handler to show track details
     row.addEventListener('click', () => {
       const trackData = JSON.parse(row.dataset.track);
       showTrackDetails(trackData);
     });
   });
+}
+
+// Track previous highlight values for trend calculation
+let previousHighlights = {};
+
+// Update highlights section with calculated data and trends
+function updateHighlights(highlights) {
+  const highlightCards = document.querySelectorAll('.highlight-card');
+  
+  // Add updating animation class
+  highlightCards.forEach(card => card.classList.add('updating'));
+  
+  // Remove animation class after it completes
+  setTimeout(() => {
+    highlightCards.forEach(card => card.classList.remove('updating'));
+  }, 1000);
+
+  // Update each highlight with trend indicator
+  updateHighlightWithTrend('total-plays', highlights.totalPlays, previousHighlights.totalPlays);
+  updateHighlightWithTrend('popular-track', highlights.popularTrack, previousHighlights.popularTrack);
+  updateHighlightWithTrend('avg-likes', highlights.avgLikes, previousHighlights.avgLikes);
+  updateHighlightWithTrend('recent-activity', highlights.recentActivity, previousHighlights.recentActivity);
+  updateHighlightWithTrend('total-reposts', highlights.totalReposts, previousHighlights.totalReposts);
+  updateHighlightWithTrend('total-comments', highlights.totalComments, previousHighlights.totalComments);
+
+  // Store current values for next comparison
+  previousHighlights = {...highlights};
+}
+
+// Helper function to update a highlight with trend indicator
+function updateHighlightWithTrend(id, currentValue, previousValue) {
+  const container = document.getElementById(id);
+  if (!container) return;
+
+  // Update main value
+  if (typeof currentValue === 'number') {
+    container.textContent = formatNumber(currentValue);
+  } else {
+    container.textContent = currentValue;
+  }
+
+  // Calculate trend if we have previous data
+  if (previousValue !== undefined) {
+    const trendContainer = container.closest('.highlight-card').querySelector('.trend');
+    const changeContainer = container.closest('.highlight-card').querySelector('.change');
+    
+    if (typeof currentValue === 'number' && typeof previousValue === 'number') {
+      const change = currentValue - previousValue;
+      const percentChange = previousValue !== 0 ? (change / previousValue) * 100 : 0;
+      
+      // Update trend indicator
+      if (trendContainer) {
+        trendContainer.className = `trend ${change >= 0 ? 'up' : 'down'}`;
+        trendContainer.innerHTML = `
+          ${change >= 0 ? '▲' : '▼'}
+          <span>${Math.abs(percentChange).toFixed(1)}%</span>
+        `;
+      }
+      
+      // Update change tooltip
+      if (changeContainer) {
+        changeContainer.className = `change ${change >= 0 ? 'up' : 'down'}`;
+        changeContainer.textContent = `${change >= 0 ? '+' : ''}${formatNumber(change)} (${Math.abs(percentChange).toFixed(1)}%)`;
+      }
+    }
+  }
 }
 
 // Helper function to calculate highlights
@@ -548,7 +652,9 @@ function calculateHighlights(data) {
     popularTrack: '',
     maxPlays: 0,
     avgLikes: 0,
-    recentActivity: ''
+    recentActivity: '',
+    totalReposts: 0,
+    totalComments: 0
   };
   
   let totalLikes = 0;
@@ -582,6 +688,16 @@ function calculateHighlights(data) {
       if (trackDate > mostRecentDate) {
         mostRecentDate = trackDate;
         highlights.recentActivity = trackDate.toLocaleDateString();
+      }
+      
+      // Total reposts
+      if (track.scbuttonrepost) {
+        highlights.totalReposts += parseInt(track.scbuttonrepost) || 0;
+      }
+      
+      // Total comments
+      if (track.Comment) {
+        highlights.totalComments += parseInt(track.Comment) || 0;
       }
     });
   });

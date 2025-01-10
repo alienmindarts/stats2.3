@@ -8,33 +8,11 @@
   <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
 </head>
 <body>
-  <div class="chart-type-controls">
-    <h2>Chart Type:</h2>
-    <div class="chart-type-buttons">
-      <button class="chart-type-button active" data-type="bar">Bar</button>
-      <button class="chart-type-button" data-type="line">Line</button>
-    </div>
-  </div>
-  <div class="view-controls">
-    <h2>View:</h2>
-    <div class="view-buttons">
-      <button class="view-button active" data-view="ratio" title="Display Plays/Likes Ratio">Ratio</button>
-      <button class="view-button" data-view="plays" title="Display Total Plays">Plays</button>
-      <button class="view-button" data-view="likes" title="Display Total Likes">Likes</button>
-    </div>
-  </div>
-  <div class="sort-controls">
-    <h2>Sort By:</h2>
-    <div class="sort-buttons">
-      <button id="sort-asc" title="Sort in Ascending Order">Ascending</button>
-      <button id="sort-desc" title="Sort in Descending Order">Descending</button>
-    </div>
-  </div>
-  <div class="comparison-controls">
-    <h2>Comparison Mode:</h2>
-    <div class="comparison-buttons">
-      <button class="comparison-button active" data-mode="overlay" title="Overlay datasets">Overlay</button>
-      <button class="comparison-button" data-mode="side-by-side" title="Display datasets side by side">Side-by-Side</button>
+  <div class="search-controls">
+    <h2>Track Search</h2>
+    <div class="search-input-container">
+      <input type="text" id="trackSearch" placeholder="Search tracks...">
+      <button id="clearSearch" class="search-button">Clear</button>
     </div>
   </div>
   <div class="chart-container">
@@ -65,25 +43,37 @@
         <div class="value" id="recent-activity">0</div>
         <div class="subtext">Last 7 Days</div>
       </div>
+      <div class="highlight-card">
+        <h3>Total Reposts</h3>
+        <div class="value" id="total-reposts">0</div>
+        <div class="subtext">All Time</div>
+      </div>
+      <div class="highlight-card">
+        <h3>Total Comments</h3>
+        <div class="value" id="total-comments">0</div>
+        <div class="subtext">All Time</div>
+      </div>
     </div>
   </div>
   <div class="top-songs-section">
     <h2>Top 10 Songs by Play/Like Ratio</h2>
-    <table id="topSongsTable">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Song</th>
-          <th>Artist</th>
-          <th>Plays</th>
-          <th>Likes</th>
-          <th>Ratio</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Rows will be populated by JavaScript -->
-      </tbody>
-    </table>
+    <div class="top-songs-table-container">
+      <table id="topSongsTable">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Song</th>
+            <th>Artist</th>
+            <th>Plays</th>
+            <th>Likes</th>
+            <th>Ratio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
   </div>
   <div id="average-container"></div>
   <div id="detailsPanel" style="display: none;">
