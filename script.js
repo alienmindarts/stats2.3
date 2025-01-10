@@ -37,6 +37,10 @@ async function loadArtistData() {
           console.warn(`Skipping invalid track in ${file} - missing required fields`);
           return false;
         }
+        // Add URL if available
+        if (track['Title_URL']) {
+          track.URL = track['Title_URL'];
+        }
         return true;
       });
       
@@ -272,10 +276,50 @@ chartDiv.on('plotly_click', function(data) {
   if (data.points.length > 0) {
     const point = data.points[0];
     const artist = point.data.name;
-    const trackIndex = point.pointNumber;
-    showTrackDetails(artistData[artist][trackIndex]);
+  // Find the actual track using customdata
+  const track = point.data.customdata[point.pointNumber].track;
+    track.artist = artist; // Add artist name to track data
+    showTrackDetails(track);
   }
 });
+
+// Enhanced track details display
+function showTrackDetails(track) {
+  const panel = document.getElementById('detailsPanel');
+  const plays = getPlays(track);
+  const ratio = getRatioData(track);
+  
+  // Update track header
+  panel.querySelector('.track-header h3').textContent = track.Title;
+  
+  // Update stats
+  panel.querySelector('#plays').textContent = plays.toLocaleString();
+  panel.querySelector('#likes').textContent = track.Like.toLocaleString();
+  panel.querySelector('#ratio').textContent = `${ratio.toFixed(2)}%`;
+  
+  // Update play button
+  const playButton = panel.querySelector('.play-button');
+  if (track.URL) {
+    playButton.href = track.URL;
+    playButton.style.display = 'inline-flex';
+  } else {
+    playButton.style.display = 'none';
+  }
+  
+  // Show panel with animation
+  panel.style.display = 'block';
+  panel.style.animation = 'slideUp 0.3s ease';
+  
+  // Add close button click handler
+  const closeButton = panel.querySelector('.close-button');
+  closeButton.onclick = () => {
+    panel.style.display = 'none';
+  };
+  
+  // Highlight corresponding point on chart
+  const traceIndex = Object.keys(artistData).indexOf(track.artist);
+  Plotly.Fx.hover(chartDiv, [{curveNumber: traceIndex, pointNumber: track.pointNumber}]);
+}
 
 // Update chart with current view and sort
 function updateChart() {
@@ -373,6 +417,7 @@ function updateChart() {
         opacity: 0.8
       },
       customdata: artistTracks.map(item => ({
+        track: item.track,
         title: item.track.Title,
         plays: getPlays(item.track),
         likes: item.track.Like,
