@@ -461,6 +461,83 @@ function updateChart() {
     if (loadingIndicator) {
       loadingIndicator.style.display = 'none';
     }
+    
+    // Update top songs table
+    updateTopSongsTable(selectedArtists);
+  });
+}
+
+// Calculate play/like ratio for a track
+function calculatePlayLikeRatio(track) {
+  const plays = getPlays(track);
+  return plays > 0 ? (track.Like / plays) : 0;
+}
+
+// Get top 10 songs from selected artists
+function getTopSongs(selectedArtists) {
+  // Get all tracks from selected artists
+  const allTracks = selectedArtists.flatMap(artist => 
+    artistData[artist].map(track => ({
+      ...track,
+      artist,
+      ratio: calculatePlayLikeRatio(track)
+    }))
+  );
+
+  // Sort by ratio descending
+  const sortedTracks = allTracks.sort((a, b) => b.ratio - a.ratio);
+
+  // Return top 10
+  return sortedTracks.slice(0, 10);
+}
+
+// Update top songs table
+function updateTopSongsTable(selectedArtists) {
+  const table = document.getElementById('topSongsTable');
+  if (!table) return;
+
+  // Clear existing rows
+  while (table.rows.length > 1) {
+    table.deleteRow(1);
+  }
+
+  // Get top songs
+  const topSongs = getTopSongs(selectedArtists);
+
+  // Add rows for top songs
+  topSongs.forEach((track, index) => {
+    const row = table.insertRow();
+    row.dataset.track = JSON.stringify(track);
+    
+    // Rank
+    const rankCell = row.insertCell();
+    rankCell.textContent = index + 1;
+    
+    // Track name
+    const nameCell = row.insertCell();
+    nameCell.textContent = track.Title;
+    
+    // Artist
+    const artistCell = row.insertCell();
+    artistCell.textContent = track.artist;
+    
+    // Plays
+    const playsCell = row.insertCell();
+    playsCell.textContent = getPlays(track).toLocaleString();
+    
+    // Likes
+    const likesCell = row.insertCell();
+    likesCell.textContent = track.Like.toLocaleString();
+    
+    // Ratio
+    const ratioCell = row.insertCell();
+    ratioCell.textContent = `${(track.ratio * 100).toFixed(2)}%`;
+    
+    // Add click handler to show track details
+    row.addEventListener('click', () => {
+      const trackData = JSON.parse(row.dataset.track);
+      showTrackDetails(trackData);
+    });
   });
 }
 
