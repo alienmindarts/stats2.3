@@ -755,6 +755,93 @@ setupEventListeners('.chart-type-button', 'click', function() {
   updateChart();
 });
 
+// Set up XY slope slider
+const xySlider = document.getElementById('xySlope');
+const slopeValue = document.getElementById('slopeValue');
+
+if (xySlider && slopeValue) {
+  xySlider.addEventListener('input', function() {
+    const slope = this.value / 100;
+    slopeValue.textContent = this.value;
+    updateChartWithSlope(slope);
+  });
+}
+
+// Update chart with slope adjustment
+function updateChartWithSlope(slope) {
+  if (!chartDiv) return;
+
+  // Get current data
+  const data = chartDiv.data;
+  
+  // Calculate min/max values for normalization
+  const allX = data.flatMap(trace => trace.x);
+  const allY = data.flatMap(trace => trace.y);
+  const minX = Math.min(...allX);
+  const maxX = Math.max(...allX);
+  const meanX = allX.reduce((sum, x) => sum + x, 0) / allX.length;
+  const meanY = allY.reduce((sum, y) => sum + y, 0) / allY.length;
+
+  // Apply slope adjustment with normalized values and aspect ratio preservation
+  const adjustedData = data.map(trace => {
+    const adjustedPoints = trace.x.map((x, i) => {
+      // Normalize x and y to 0-1 range
+      const normX = (x - minX) / (maxX - minX);
+      const normY = (trace.y[i] - minY) / (maxY - minY);
+      
+      // Calculate slope adjustment with aspect ratio preservation
+      const aspectRatio = (maxX - minX) / (maxY - minY);
+      const adjustedY = normY + (slope * normX * aspectRatio);
+      
+      // Convert back to original scale with bounds checking
+      const newY = Math.max(0, Math.min(100, 
+        minY + (adjustedY * (maxY - minY))
+      ));
+      
+      return {x: x, y: newY};
+    });
+    
+    return {
+      ...trace,
+      y: adjustedPoints.map(p => p.y)
+    };
+  });
+
+  // Calculate new y-axis range from adjusted data
+  const allAdjustedY = adjustedData.flatMap(trace => trace.y);
+  const adjustedMinY = Math.min(...allAdjustedY);
+  const adjustedMaxY = Math.max(...allAdjustedY);
+  const yRange = [adjustedMinY - (adjustedMaxY - adjustedMinY) * 0.1, adjustedMaxY + (adjustedMaxY - adjustedMinY) * 0.1];
+
+  // Constrain y-values to 0-100 percentage range
+  const constrainedYRange = [
+    Math.max(0, minY - (maxY - minY) * 0.05),
+    Math.min(100, maxY + (maxY - minY) * 0.05)
+  ];
+
+  // Constrain x-values to 0-100 percentage range
+  const constrainedXRange = [
+    Math.max(0, Math.min(...allX)),
+    Math.min(100, Math.max(...allX))
+  ];
+
+  // Update layout with constrained ranges
+  const updatedLayout = {
+    ...layout,
+    yaxis: {
+      ...layout.yaxis,
+      range: constrainedYRange
+    },
+    xaxis: {
+      ...layout.xaxis,
+      range: constrainedXRange
+    }
+  };
+
+  // Update chart with adjusted data and updated layout
+  Plotly.react(chartDiv, adjustedData, updatedLayout, config);
+}
+
 // Set up event listeners for comparison buttons
 setupEventListeners('.comparison-button', 'click', function() {
   document.querySelectorAll('.comparison-button').forEach(btn => btn.classList.remove('active'));
